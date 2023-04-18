@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+    app:
+        container_name: lara-food-app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - redis
+        networks:
+            - lara-food
+    nginx:
+        container_name: lara-food-nginx
+        image: nginx:alpine
+        restart: unless-stopped
+        ports:
+            - "8989:80"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - lara-food
+    # queue:
+    #     container_name: lara-food-queue
+    #     restart: unless-stopped
+    #     command: "php artisan queue:work"
+    #     volumes:
+    #         - ./:/var/www
+    #     depends_on:
+    #         - redis
+    #         - app
+    #     networks:
+    #         - lara-food
+
+    # redis
+    # redis:
+    #     container_name: lara-food-redis
+    #     image: redis:latest
+    #     ports:
+    #       - "6379:6379"
+    #     networks:
+    #         - lara-food
+
+networks:
+    lara-food:
+        driver: bridge

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PlansController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('admin/')->group(function () {
+    Route::get('plans', [PlansController::class, 'index']);
 });
 
 Auth::routes();

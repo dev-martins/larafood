@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdatePlan;
 use App\Models\Plan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PlansController extends Controller
 {
@@ -17,7 +18,10 @@ class PlansController extends Controller
 
     public function index()
     {
-        $plans = $this->plans->paginate();
+        $plans = $this->plans
+            ->latest()
+            ->paginate();
+
         return view('admin.pages.plans.index', compact('plans'));
     }
 
@@ -28,7 +32,9 @@ class PlansController extends Controller
 
     public function store(StoreUpdatePlan $request)
     {
-        $this->plans->create($request->all());
+        $data = $request->only('name', 'price', 'description');
+        $data['url'] = Str::kebab($data['name']);
+        $this->plans->create($data);
 
         return redirect()->route('plans.index');
     }
@@ -48,17 +54,17 @@ class PlansController extends Controller
     public function destroy($url)
     {
         $plan = $this->plans
-                        ->with('details')
-                        ->where('url', $url)
-                        ->first();
+            ->with('details')
+            ->where('url', $url)
+            ->first();
 
         if (!$plan)
             return redirect()->back();
 
         if ($plan->details->count() > 0) {
             return redirect()
-                        ->back()
-                        ->with('error', 'Existem detahes vinculados a esse plano, portanto não pode deletar');
+                ->back()
+                ->with('error', 'Existem detahes vinculados a esse plano, portanto não pode deletar');
         }
 
         $plan->delete();

@@ -31,7 +31,8 @@ Route::prefix('admin')
              */
 
             Route::get('/', [PlansController::class, 'index'])->name('plans.index');
-            Route::post('/create', [PlansController::class, 'create'])->name('plans.create');
+            Route::get('/create', [PlansController::class, 'create'])->name('plans.create');
+            Route::post('/create', [PlansController::class, 'store'])->name('plans.store');
             Route::put('/{url}', [PlansController::class, 'update'])->name('plans.update');
             Route::get('/{url}/edit', [PlansController::class, 'edit'])->name('plans.edit');
             Route::any('/search', [PlansController::class, 'search'])->name('plans.search');
